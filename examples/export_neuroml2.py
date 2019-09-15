@@ -7,11 +7,20 @@ from pyneuroml.neuron import export_to_neuroml2, set_erev_for_mechanism
 # export_to_neuroml2("Cell_Scnn1a.hoc", "Cell_Scnn1a.cell.nml", known_rev_potentials={"na":60,"k":-90,"ca":140}, includeBiophysicalProperties=True)
 
 # TODO Cell_Scnn1a.hoc contains erev potentials as `ek = -107`, `ehcn = -45` in its sections descriptions
+# TODO ask Verner how ephys should transform into hoc from nml? Now we loose in the final .hoc info about mechanism rev potential.
+# Below we can see that ek = -107 is a general rev but it should be Im revm like ek_Im?
+# gbar_Im = 0.0012021154978799999
+# ek = -107
+
 # mview_neuroml2.hoc must use them. If it does not find a rev mechanism then it should print warning and continue!
 
 resource_package = 'pyneuroml.neuron'
 resource_path = '/mview_neuroml2.hoc'
 template = pkg_resources.resource_filename(resource_package, resource_path)
+
+known_rev_potentials = {"na":60,"k":-90,"ca":140}
+for ion in known_rev_potentials.keys():
+    set_erev_for_mechanism(ion, known_rev_potentials[ion])
 
 h.load_file("stdrun.hoc")
 h.load_file("import3d.hoc")
@@ -20,9 +29,6 @@ h.load_file(template)
 h.load_file('Cell_Scnn1a.hoc')
 cell_hoc = h.Cell_Scnn1a('.', 'Cell_Scnn1a.swc')
 
-known_rev_potentials = {"na":60,"k":-90,"ca":140}
-for ion in known_rev_potentials.keys():
-    set_erev_for_mechanism(ion, known_rev_potentials[ion])
 
 mv = h.ModelView(0)
 mv_xml = h.ModelViewNeuroML2(mv)

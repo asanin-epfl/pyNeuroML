@@ -642,10 +642,12 @@ proc xmlwrite_biophysics() {
                             } else if (hoc_sf_.substr(dmech.name,"K")>=0) {
                                 cellnml2file.printf(" erev=\"%fmV\" ", erev_K)
                             } else {
+                                print "Looking for erev of:"
+                                print dmech.name
                                 value = p.get_erev_for_mechanism(dmech.name)
                                 cellnml2file.printf(" erev=\"%fmV\" ", value)
                             }
-                            
+
                             cellnml2file.printf("/>\n\n")
                             
                             
